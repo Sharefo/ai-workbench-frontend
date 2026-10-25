@@ -1,0 +1,48 @@
+.app {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+
+.app h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.subtitle {
+  margin: 4px 0 32px;
+  color: #656d76;
+  font-size: 14px;
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid #d8dee4;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+}
+
+.card h2 {
+  margin: 0 0 12px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.ok {
+  color: #1a7f37;
+  margin: 0;
+}
+
+.err {
+  color: #b35900;
+  margin: 0;
+}
+
+code {
+  background: #f0f1f3;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 13px;
+}
