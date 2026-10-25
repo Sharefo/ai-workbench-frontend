@@ -1,6 +1,6 @@
 # ai-workbench-frontend
 
-AI 工作台 · 前端。React 19 + TypeScript + Vite 8。
+AI 工作台 · 前端。React 19 + TypeScript + Vite 8 + Ant Design 6 + CodeMirror 6。
 
 ## 快速开始
 
@@ -27,10 +27,24 @@ npm run typecheck  # 只做类型检查
 
 ```
 src/
-├── App.tsx          # 工作台主页面，含后端连通性检查
-├── main.tsx         # React 入口
-├── index.css        # 全局样式
-└── App.css          # 主页面样式
+├── App.tsx                     # 工作台外壳：顶部 Tab（首页 / SQL 实验室）
+├── pages/
+│   ├── HomePage.tsx
+│   └── SqlLabPage.tsx          # SQL 实验室：三栏布局与全部状态编排
+├── features/sqllab/
+│   ├── api.ts                  # 后端接口封装 + SSE 流式读取
+│   ├── types.ts                # 与后端 DTO 对齐的 TS 类型
+│   ├── session.ts              # 数据空间 id（localStorage）与闯关进度
+│   ├── utils/csv.ts
+│   ├── components/
+│   │   ├── SchemaTree.tsx      # 左：库表结构树 + 样例数据
+│   │   ├── SqlEditor.tsx       # 中上：CodeMirror 6 编辑器（表名/字段自动补全）
+│   │   ├── ResultPanel.tsx     # 中下：结果表格 / 执行日志
+│   │   ├── AiPanel.tsx         # 右：AI 生成 / 修复 / 讲解
+│   │   ├── SeedPanel.tsx       # 右：一句话造数
+│   │   ├── ExercisePanel.tsx   # 右：闯关练习 + 自动判分
+│   │   └── SessionBar.tsx     # 顶：数据空间切换
+└── styles/sqllab.css
 ```
 
 ## 技术栈
@@ -40,6 +54,8 @@ src/
 | React | 19.x |
 | Vite | 8.x |
 | TypeScript | 5.9 |
+| Ant Design | 6.x（原生支持 React 19） |
+| CodeMirror | 6.x（`@codemirror/lang-sql`，MySQL 方言） |
 
 ## 许可证
 

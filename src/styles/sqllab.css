@@ -1,0 +1,547 @@
+.app-layout {
+  height: 100vh;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  height: 52px;
+  padding: 0 20px;
+  background: #ffffff;
+  border-bottom: 1px solid #ececec;
+}
+
+.app-header .logo {
+  font-size: 15px;
+  font-weight: 500;
+  color: #1f2328;
+  white-space: nowrap;
+}
+
+.app-tabs {
+  flex: 1;
+  min-width: 0;
+}
+
+.app-tabs .ant-tabs-nav {
+  margin: 0;
+}
+
+.app-content {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ---------- 首页 ---------- */
+.home {
+  padding: 28px 32px;
+  overflow: auto;
+  width: 100%;
+}
+
+.home h1 {
+  margin: 0 0 4px;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.home .subtitle {
+  margin: 0 0 20px;
+  color: #8c8c8c;
+  font-size: 13px;
+}
+
+.home-card {
+  max-width: 760px;
+  margin-bottom: 16px;
+}
+
+.home-list {
+  margin: 0 0 16px;
+  padding-left: 20px;
+  color: #595959;
+}
+
+/* ---------- SQL 实验室骨架 ---------- */
+.sqllab {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+}
+
+.session-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: #ffffff;
+  border-bottom: 1px solid #ececec;
+}
+
+.sqllab-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.sqllab-left {
+  width: 268px;
+  flex: 0 0 268px;
+  border-right: 1px solid #ececec;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.sqllab-center {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.sqllab-right {
+  width: 420px;
+  flex: 0 0 420px;
+  border-left: 1px solid #ececec;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* ---------- 左：库表结构 ---------- */
+.schema-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 12px;
+  gap: 8px;
+}
+
+.schema-panel .panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 500;
+}
+
+.schema-body {
+  flex: 1;
+  overflow: auto;
+  min-height: 0;
+}
+
+.schema-loading {
+  padding: 20px;
+  text-align: center;
+}
+
+.schema-footer {
+  color: #bfbfbf;
+  font-size: 12px;
+}
+
+.tree-table {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tree-table-name {
+  font-weight: 500;
+}
+
+.tree-column {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tree-col-name {
+  color: #334155;
+}
+
+.tree-col-type {
+  color: #a3a3a3;
+  font-size: 11px;
+}
+
+.tree-comment {
+  color: #8c8c8c;
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 130px;
+}
+
+/* ---------- 中：工具栏 / 编辑器 / 结果 ---------- */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-bottom: 1px solid #ececec;
+  background: #ffffff;
+}
+
+.editor-wrap {
+  height: 240px;
+  min-height: 120px;
+  border-bottom: 1px solid #ececec;
+  background: #ffffff;
+}
+
+.sql-editor {
+  height: 100%;
+  overflow: hidden;
+}
+
+.sql-editor .cm-editor {
+  height: 100%;
+}
+
+.result-panel {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+}
+
+.result-panel .ant-tabs {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.result-panel .ant-tabs-content-holder {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.result-panel-head {
+  position: relative;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.total-time {
+  position: absolute;
+  right: 12px;
+  top: 10px;
+  font-size: 12px;
+}
+
+.result-area,
+.log-area {
+  padding: 12px;
+}
+
+.result-block {
+  margin-bottom: 16px;
+}
+
+.result-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #595959;
+  margin-bottom: 6px;
+}
+
+.result-head .spacer {
+  flex: 1;
+}
+
+.grid-wrap {
+  border: 1px solid #ececec;
+  border-radius: 6px;
+  overflow: auto;
+  max-height: 420px;
+}
+
+.sample-table-wrap {
+  max-height: 420px;
+  overflow: auto;
+}
+
+table.grid {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 12px;
+}
+
+table.grid th,
+table.grid td {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 5px 10px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+table.grid thead th {
+  position: sticky;
+  top: 0;
+  background: #fafafa;
+  font-weight: 500;
+  color: #334155;
+  z-index: 1;
+}
+
+table.grid td.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+table.grid .row-no {
+  width: 44px;
+  color: #bfbfbf;
+  background: #fcfcfc;
+  text-align: right;
+}
+
+.col-type {
+  display: block;
+  font-size: 10px;
+  color: #bfbfbf;
+  font-weight: 400;
+}
+
+.null {
+  color: #bfbfbf;
+  font-style: normal;
+}
+
+.error-text {
+  white-space: pre-wrap;
+}
+
+.log-line {
+  display: flex;
+  gap: 10px;
+  font-size: 12px;
+  padding: 3px 0;
+  border-bottom: 1px solid #fafafa;
+}
+
+.log-at {
+  color: #bfbfbf;
+  font-variant-numeric: tabular-nums;
+}
+
+.log-error {
+  color: #cf1322;
+}
+
+.log-success {
+  color: #389e0d;
+}
+
+.dim {
+  color: #8c8c8c;
+  font-size: 12px;
+}
+
+/* ---------- 右：AI / 练习 / 造数 ---------- */
+.sqllab-right .right-tabs {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.sqllab-right .right-tabs > .ant-tabs-content-holder {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.ai-panel,
+.seed-panel,
+.exercise-panel {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ai-model {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ai-context {
+  border: 1px solid #f0f0f0;
+  border-radius: 6px;
+  padding: 10px;
+  background: #fafafa;
+}
+
+.ai-error-box {
+  color: #cf1322;
+  margin-bottom: 6px;
+  white-space: pre-wrap;
+}
+
+.ai-sql-preview,
+.ai-sql {
+  margin: 6px 0 0;
+  padding: 10px;
+  background: #f6f8fa;
+  border-radius: 6px;
+  font-family: 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 12px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.ai-sql.streaming {
+  color: #334155;
+}
+
+.ai-output-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 500;
+}
+
+.ai-explanation {
+  white-space: pre-wrap;
+  color: #595959;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+/* 造数 */
+.seed-examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.example-tag {
+  margin: 0;
+}
+
+.seed-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.seed-plan-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 练习 */
+.exercise-progress {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.exercise-group {
+  margin-bottom: 8px;
+}
+
+.exercise-group-title {
+  font-weight: 500;
+  color: #334155;
+  margin-bottom: 4px;
+}
+
+.exercise-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.exercise-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 10px;
+  border: 1px solid #f0f0f0;
+  border-radius: 6px;
+  background: #ffffff;
+  cursor: pointer;
+  text-align: left;
+  font-size: 13px;
+}
+
+.exercise-item:hover {
+  border-color: #91caff;
+}
+
+.exercise-item.active {
+  border-color: #1677ff;
+  background: #f0f7ff;
+}
+
+.exercise-item.done .exercise-item-title::before {
+  content: '✓ ';
+  color: #389e0d;
+}
+
+.exercise-item-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.exercise-detail {
+  border-top: 1px solid #f0f0f0;
+  padding-top: 10px;
+  margin-top: 4px;
+}
+
+.exercise-detail-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.exercise-desc {
+  margin: 0 0 6px;
+  color: #434343;
+  line-height: 1.7;
+}
+
+.exercise-tags {
+  margin-bottom: 6px;
+}
+
+.exercise-hint {
+  background: #fffbe6;
+  border: 1px solid #ffe58f;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 12px;
+  color: #614700;
+}
+
+.hint-list {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  font-size: 12px;
+}
