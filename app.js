@@ -75,6 +75,8 @@ async function init() {
     await loadSpaces();
     await loadTables();
     await loadQuizzes();
+    // 首屏自动跑一条示例查询，打开就能看到结果表格，不用先猜该点哪里
+    await runSql(false);
   } catch (e) {
     $('statusDot').className = 'dot bad'; $('statusText').textContent = '服务未连接';
     toast('后端没连上，请确认服务已启动');
