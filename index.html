@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SQL 实验室 · 在线练习场</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">▦</span> SQL 实验室 <span class="badge">练习场</span></div>
+    <div class="top-actions">
+      <button class="btn ghost drawer-btn" id="drawerBtn" title="展开表结构">☰ 表结构</button>
+      <label class="space-picker">空间
+        <select id="spaceSelect" aria-label="选择空间"></select>
+      </label>
+      <button class="btn ghost" id="newSpaceBtn" title="创建一个独立空间">+ 新建</button>
+      <span class="status"><i class="dot" id="statusDot"></i><span id="statusText">连接中…</span></span>
+      <button class="btn ghost" id="helpBtn" title="查看使用帮助">? 使用帮助</button>
+    </div>
+  </header>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="side-head">数据表 <span class="count" id="tableCount">0 张</span></div>
+    <input class="search" id="tableSearch" placeholder="🔍 搜索表名 / 中文名">
+    <div class="table-list" id="tableList"></div>
+    <div class="table-detail" id="tableDetail">
+      <div class="empty-hint">点左侧任意一张表，查看字段名、中文说明和样例数据。</div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <nav class="tabs" id="tabs">
+      <button class="tab active" data-tab="sql">SQL 工作台</button>
+      <button class="tab" data-tab="ai">AI 助手</button>
+      <button class="tab" data-tab="gen">一键造数</button>
+      <button class="tab" data-tab="quiz">闯关练习</button>
+      <button class="tab" data-tab="history">执行记录</button>
+    </nav>
+
+    <!-- P0 / P1：SQL 工作台 -->
+    <section class="panel" id="panel-sql">
+      <div class="welcome">
+        <div>
+          <h1>欢迎来到 SQL 练习场 👋</h1>
+          <p>不用装数据库、不用配环境。左边看表结构，中间写 SQL，下面立刻出结果；不会写就说人话找 AI 帮忙。</p>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><b id="statTables">10</b><span>张模拟表</span></div>
+          <div class="stat"><b id="statRows">—</b><span>行样例数据</span></div>
+          <div class="stat"><b>15</b><span>道闯关题</span></div>
+          <div class="stat"><b id="statAi">免费离线</b><span>AI 模式</span></div>
+        </div>
+      </div>
+      <div class="quick-grid">
+        <button class="quick" data-demo="SELECT * FROM users LIMIT 5;"><i>①</i><b>看表结构</b><span>点左侧表名展开字段，或直接跑一条示例查询</span></button>
+        <button class="quick" data-demo="SELECT id, name, price, stock FROM products ORDER BY price DESC LIMIT 10;"><i>②</i><b>写第一条 SQL</b><span>点这里一键填入「查最贵的 10 个商品」</span></button>
+        <button class="quick" data-tab-jump="ai"><i>③</i><b>让 AI 帮你写</b><span>输入「统计每个城市的订单数」试试</span></button>
+        <button class="quick" data-tab-jump="quiz"><i>④</i><b>闯关练习</b><span>15 道题从易到难，提交后自动判分</span></button>
+      </div>
+
+      <div class="card editor-card">
+        <div class="card-head">
+          <div><b>SQL 编辑器</b><span class="sub">支持 SELECT / JOIN / GROUP BY 等常用语法</span></div>
+          <div class="head-actions">
+            <select id="sqlMode" class="select" aria-label="运行模式">
+              <option value="query">查询模式（只读）</option>
+              <option value="write">写入模式（需二次确认）</option>
+            </select>
+            <button class="btn primary" id="runBtn">▶ 运行 <kbd>⌘↵</kbd></button>
+          </div>
+        </div>
+        <textarea id="sqlEditor" spellcheck="false" placeholder="在这里写 SQL，例如：SELECT * FROM users LIMIT 5;">SELECT * FROM users LIMIT 5;</textarea>
+        <div class="chips">
+          <span class="chip-label">试一句：</span>
+          <button class="chip" data-demo="SELECT city, COUNT(*) AS user_count FROM users GROUP BY city ORDER BY user_count DESC;">每城用户数</button>
+          <button class="chip" data-demo="SELECT status, COUNT(*) AS cnt FROM orders GROUP BY status;">各状态订单</button>
+          <button class="chip" data-demo="SELECT u.city, COUNT(*) AS order_count FROM orders o JOIN users u ON o.user_id = u.id GROUP BY u.city ORDER BY order_count DESC LIMIT 10;">城市订单 TOP10</button>
+          <button class="chip" data-demo="DELETE FROM users;">试试删数据（会被拦）</button>
+        </div>
+      </div>
+
+      <div class="card result-card">
+        <div class="card-head">
+          <div><b>执行结果</b><span class="sub" id="resultMeta">还没有执行过 SQL</span></div>
+          <div class="head-actions">
+            <button class="btn ghost" id="copySqlBtn">复制 SQL</button>
+            <button class="btn ghost" id="copyResultBtn">复制结果</button>
+          </div>
+        </div>
+        <div id="sqlMessage" class="message hidden"></div>
+        <div class="table-wrap" id="resultWrap"><table class="grid" id="resultTable"><tbody></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- P2：AI 助手 -->
+    <section class="panel hidden" id="panel-ai">
+      <div class="card">
+        <div class="card-head"><div><b>用中文描述，让 AI 写 SQL</b><span class="sub">生成后会自动自检能不能跑通；没配 key 也能用（免费离线规则引擎）</span></div></div>
+        <textarea id="aiQuestion" placeholder="例如：统计每个城市的订单数，按从多到少排前 10">统计每个城市的订单数，按从多到少排前 10</textarea>
+        <div class="chips">
+          <span class="chip-label">试试：</span>
+          <button class="chip" data-ai="查所有上架商品">查所有上架商品</button>
+          <button class="chip" data-ai="每个分类有多少商品">每个分类有多少商品</button>
+          <button class="chip" data-ai="销量最好的 5 个商品">销量最好的 5 个商品</button>
+          <button class="chip" data-ai="各支付方式的成功金额">各支付方式的成功金额</button>
+          <button class="chip" data-ai="统计每个城市的用户数">统计每个城市的用户数</button>
+        </div>
+        <div class="row-end"><button class="btn primary" id="aiGenerateBtn">✨ 生成 SQL</button></div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <div><b>生成结果</b><span class="badge soft" id="aiSource">等待生成</span></div>
+          <div class="head-actions">
+            <button class="btn ghost" id="aiCopyBtn">复制</button>
+            <button class="btn primary" id="aiFillRunBtn">填入编辑器并运行</button>
+          </div>
+        </div>
+        <pre class="code-out" id="aiSql">点上面的「生成 SQL」，这里会像打字一样逐字出现。</pre>
+        <div class="explain" id="aiExplain">生成后会用大白话说明为什么这么写。</div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div><b>跑错了？一键修复</b><span class="sub">会把真实表结构一起参考，不会凭猜改字段</span></div></div>
+        <div class="two-col">
+          <textarea id="fixSql" placeholder="贴上跑不通的 SQL" spellcheck="false">SELECT * FORM users LIMIT 5;</textarea>
+          <textarea id="fixError" placeholder="报错内容（可留空，系统会自动复现）" spellcheck="false"></textarea>
+        </div>
+        <div class="row-end"><button class="btn" id="aiFixBtn">🛠 一键修复</button></div>
+        <div class="message hidden" id="fixMessage"></div>
+        <pre class="code-out hidden" id="fixOut"></pre>
+      </div>
+    </section>
+
+    <!-- P3：一键造数 -->
+    <section class="panel hidden" id="panel-gen">
+      <div class="card">
+        <div class="card-head"><div><b>一句话造测试数据</b><span class="sub">只让 AI 产出「表结构 + 字段生成规则」，几千行由程序批量生成，几秒完成且不费额度</span></div></div>
+        <input class="big-input" id="genPrompt" value="建一张用户行为表，造 5000 行" placeholder="例如：建一张订单表，造 3000 行">
+        <div class="chips">
+          <span class="chip-label">试试：</span>
+          <button class="chip" data-gen="建一张用户行为表，造 5000 行">用户行为 5000 行</button>
+          <button class="chip" data-gen="建一张订单表，造 3000 行">订单 3000 行</button>
+          <button class="chip" data-gen="建一张会员表，造 800 行">会员 800 行</button>
+          <button class="chip" data-gen="建一张测试表，造 10000 行">通用 10000 行</button>
+        </div>
+        <div class="row-end"><button class="btn primary" id="genPreviewBtn">① 生成预览</button></div>
+      </div>
+      <div class="card hidden" id="genPreviewCard">
+        <div class="card-head"><div><b>预览（还没写库）</b><span class="sub" id="genPlanMeta"></span></div></div>
+        <div class="message info" id="genPlanMessage"></div>
+        <pre class="code-out" id="genDdl"></pre>
+        <div class="sub-title">字段生成规则</div>
+        <div class="table-wrap"><table class="grid" id="genRules"></table></div>
+        <div class="sub-title">前 5 行预览</div>
+        <div class="table-wrap"><table class="grid" id="genRows"></table></div>
+        <div class="row-end"><button class="btn danger" id="genConfirmBtn">② 确认执行（会写入当前空间）</button></div>
+      </div>
+      <div class="message hidden" id="genResult"></div>
+    </section>
+
+    <!-- P4：闯关练习 -->
+    <section class="panel hidden" id="panel-quiz">
+      <div class="card">
+        <div class="card-head">
+          <div><b>15 道闯关题</b><span class="sub">提交后按结果集自动判分，写法不要求一样，查对就行</span></div>
+          <div class="head-actions"><span class="count" id="quizProgress">已通过 0 / 15</span></div>
+        </div>
+        <div class="progress"><div id="quizProgressBar"></div></div>
+        <div class="quiz-grid" id="quizList"></div>
+      </div>
+      <div class="card hidden" id="quizDetail">
+        <div class="card-head">
+          <div><b id="quizTitle"></b><span class="sub" id="quizMeta"></span></div>
+          <div class="head-actions"><button class="btn ghost" id="quizBackBtn">← 返回题目列表</button></div>
+        </div>
+        <div class="quiz-question" id="quizQuestion"></div>
+        <details class="hint"><summary>💡 看提示</summary><span id="quizHint"></span></details>
+        <textarea id="quizSql" spellcheck="false" placeholder="在这里写你的 SQL，然后点「提交判分」"></textarea>
+        <div class="row-end"><button class="btn primary" id="quizSubmitBtn">提交判分</button></div>
+        <div class="message hidden" id="quizFeedback"></div>
+        <details class="hint"><summary>看参考答案（先自己想想）</summary><pre id="quizAnswer"></pre></details>
+      </div>
+    </section>
+
+    <section class="panel hidden" id="panel-history">
+      <div class="card">
+        <div class="card-head">
+          <div><b>执行记录</b><span class="sub">本空间最近 100 条，可复制 SQL 或把结果粘到 Excel</span></div>
+          <div class="head-actions"><button class="btn ghost" id="historyClearBtn">清空本空间记录</button></div>
+        </div>
+        <div id="historyList"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="statusbar">
+    <span>空间 <b id="footSpace">demo</b></span><span>·</span>
+    <span id="footScale">small 数据</span><span>·</span>
+    <span>固定端口 8765</span><span>·</span>
+    <span class="safe">危险语句已拦截</span>
+    <span class="grow"></span><span>AI 负责做，你负责「做成什么样」和「什么算做完」</span>
+  </footer>
+</div>
+
+<div class="modal hidden" id="modal">
+  <div class="modal-card">
+    <div class="modal-head"><b id="modalTitle"></b><button class="icon-btn" id="modalClose">✕</button></div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot" id="modalFoot"></div>
+  </div>
+</div>
+<div class="drawer-mask hidden" id="drawerMask"></div>
+<div id="toast" class="toast hidden"></div>
+<script src="app.js"></script>
+</body>
+</html>
