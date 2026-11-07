@@ -1,0 +1,9 @@
+# 安全规矩（阶段 0.2）：以下一律不上云
+.env
+.env.*
+!.env.example
+node_modules/
+dist/
+build/
+*.log
+.DS_Store
