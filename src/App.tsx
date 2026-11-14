@@ -1,54 +1,51 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { App as AntdApp, ConfigProvider, Layout, Tabs } from 'antd'
+import zhCN from 'antd/locale/zh_CN'
+import { HomePage } from './pages/HomePage'
+import { SqlLabPage } from './pages/SqlLabPage'
 import './App.css'
-
-type BackendInfo = {
-  name: string
-  version: string
-}
+import './styles/sqllab.css'
+import './styles/sqllab-polish.css'
 
 export default function App() {
-  const [info, setInfo] = useState<BackendInfo | null>(null)
-  const [error, setError] = useState('')
+  const [tab, setTab] = useState('home')
 
-  useEffect(() => {
-    fetch('/api/info')
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        return res.json() as Promise<BackendInfo>
-      })
-      .then(setInfo)
-      .catch((e: unknown) => setError(e instanceof Error ? e.message : String(e)))
-  }, [])
+  const goTab = (next: string) => {
+    setTab(next)
+    window.scrollTo({ top: 0 })
+  }
 
   return (
-    <main className="app">
-      <h1>AI 工作台</h1>
-      <p className="subtitle">React 19 · Vite 8 · TypeScript</p>
-
-      <section className="card">
-        <h2>后端连接状态</h2>
-        {info ? (
-          <p className="ok">
-            已连接 {info.name} v{info.version}
-          </p>
-        ) : error ? (
-          <p className="err">未连接（{error}）—— 后端未启动时属正常</p>
+    <ConfigProvider
+      locale={zhCN}
+      theme={{ token: { colorPrimary: '#1677ff', borderRadius: 6, fontSize: 13 } }}
+    >
+      <AntdApp>
+        {tab === 'home' ? (
+          /* 官网首页：整页自带导航与轮播首屏，不套后台 Layout */
+          <HomePage onGoSql={() => goTab('sql')} />
         ) : (
-          <p>检查中…</p>
+          <Layout className="app-layout">
+            <Layout.Header className="app-header">
+              <span className="logo" role="button" style={{ cursor: 'pointer' }} onClick={() => goTab('home')}>
+                AI 工作台
+              </span>
+              <Tabs
+                className="app-tabs"
+                activeKey={tab}
+                onChange={goTab}
+                items={[
+                  { key: 'home', label: '首页' },
+                  { key: 'sql', label: 'SQL 实验室' },
+                ]}
+              />
+            </Layout.Header>
+            <Layout.Content className="app-content sql-enter">
+              <SqlLabPage />
+            </Layout.Content>
+          </Layout>
         )}
-      </section>
-
-      <section className="card">
-        <h2>开发入口</h2>
-        <ul>
-          <li>
-            <code>pnpm/npm run dev</code> 启动前端（5173）
-          </li>
-          <li>
-            <code>./gradlew bootRun</code> 启动后端（8080）
-          </li>
-        </ul>
-      </section>
-    </main>
+      </AntdApp>
+    </ConfigProvider>
   )
 }

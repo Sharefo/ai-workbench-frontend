@@ -1,0 +1,331 @@
+/* ============================================================
+   SQL 实验室工作台 · UI/交互优化（参考首页 Tab 渲染逻辑）
+   令牌：#16181D 文字 / #6B7280 次要 / #1677FF 强调 / #F7F8FA 浅底
+   ============================================================ */
+
+/* 进入工作台 240ms 淡入（配合猫粮碗 3D 过场收尾） */
+.sql-enter { animation: sqlEnter 240ms ease both; }
+@keyframes sqlEnter {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---------- Tab：24×2px 指示线中心展开 200ms，当前页不加线 ---------- */
+.app-tabs .ant-tabs-tab,
+.sqllab .ant-tabs-tab {
+  position: relative;
+  color: #6b7280 !important;
+  transition: color 200ms ease;
+}
+.app-tabs .ant-tabs-tab::after,
+.sqllab .ant-tabs-tab::after {
+  content: '';
+  position: absolute; left: 50%; bottom: 0;
+  width: 0; height: 2px; border-radius: 0;
+  background: #1677ff;
+  transform: translateX(-50%);
+  transition: width 200ms ease;
+}
+.app-tabs .ant-tabs-tab:hover,
+.sqllab .ant-tabs-tab:hover { color: #16181d !important; }
+.app-tabs .ant-tabs-tab:hover::after,
+.sqllab .ant-tabs-tab:hover::after { width: 24px; }
+.app-tabs .ant-tabs-tab-active .ant-tabs-tab-btn,
+.sqllab .ant-tabs-tab-active .ant-tabs-tab-btn { color: #16181d !important; font-weight: 500; }
+.app-tabs .ant-tabs-ink-bar,
+.sqllab .ant-tabs-ink-bar { display: none !important; } /* 当前页：只用文字区分，与首页规范一致 */
+
+/* 面板切换：淡入 + 轻微上移（display 恢复时自动重放） */
+.sqllab .ant-tabs-tabpane-active { animation: sqFadeIn 180ms ease both; }
+@keyframes sqFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---------- 按钮：hover 微浮起 + 主按钮投影 ---------- */
+.sqllab .ant-btn { transition: all 180ms ease; }
+.sqllab .ant-btn-primary {
+  box-shadow: 0 4px 12px rgba(22, 119, 255, 0.18);
+}
+.sqllab .ant-btn-primary:not(:disabled):not(.ant-btn-loading):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(22, 119, 255, 0.28);
+}
+.sqllab .ant-btn-default:not(:disabled):hover {
+  border-color: #1677ff;
+  color: #1677ff;
+  transform: translateY(-1px);
+}
+.sqllab .ant-btn:not(:disabled):active { transform: translateY(0); }
+
+/* ---------- Segmented：选中态高亮 ---------- */
+.sqllab .ant-segmented-item { transition: color 180ms ease; }
+.sqllab .ant-segmented-item-selected { color: #1677ff; font-weight: 600; }
+
+/* ---------- 输入控件：聚焦蓝色光晕 ---------- */
+.sqllab .ant-input:focus,
+.sqllab .ant-input-number:focus,
+.sqllab .ant-input-number-focused,
+.sqllab .ant-select-focused .ant-select-selector,
+.sqllab textarea:focus {
+  border-color: #1677ff !important;
+  box-shadow: 0 0 0 3px rgba(22, 119, 255, 0.1) !important;
+}
+
+/* ---------- 结果区：出现淡入、表格行 hover ---------- */
+.sqllab .result-block,
+.sqllab .log-line { animation: sqFadeIn 200ms ease both; }
+.sqllab .grid-wrap table tbody tr { transition: background 120ms ease; }
+.sqllab .grid-wrap table tbody tr:hover td { background: #f4f8ff !important; }
+
+/* ---------- 面板容器：圆角与浅色层次 ---------- */
+.sqllab .ai-context {
+  background: #f7f8fa;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  transition: border-color 180ms ease;
+}
+.sqllab .ai-context:hover { border-color: #d6dbe3; }
+
+/* ---------- 统一细滚动条 ---------- */
+.sqllab ::-webkit-scrollbar { width: 8px; height: 8px; }
+.sqllab ::-webkit-scrollbar-track { background: transparent; }
+.sqllab ::-webkit-scrollbar-thumb { background: #d8dee9; border-radius: 8px; }
+.sqllab ::-webkit-scrollbar-thumb:hover { background: #b9c4d4; }
+
+/* 顶栏文字与 tab 尺寸微调 */
+.app-header .logo { font-weight: 700; letter-spacing: 0.3px; }
+.app-header .ant-tabs-tab { font-size: 14px; padding: 12px 4px; }
+
+/* ===== 工作台卡片化改造：层次 / 圆角 / 间距统一 ===== */
+
+/* 画布底色与三栏卡片 */
+.app-content { background: #eef1f5; }
+
+.session-bar {
+  margin: 10px 12px 0;
+  padding: 9px 14px;
+  background: #ffffff;
+  border: 1px solid #e8eaee;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.05);
+}
+.session-bar .ant-btn { border-radius: 8px; }
+.session-bar .ant-select .ant-select-selector { border-radius: 8px !important; height: 30px !important; }
+.session-bar .ant-tag { border-radius: 999px; }
+
+.sqllab-body { gap: 12px; padding: 12px; }
+
+.sqllab-left,
+.sqllab-center,
+.sqllab-right {
+  background: #ffffff;
+  border: 1px solid #e8eaee;
+  border-radius: 14px;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.05);
+  overflow: hidden;
+}
+
+/* 左栏：搜索 + 表列表 */
+.sqllab-left { display: flex; flex-direction: column; }
+.sqllab-left .ant-input-affix-wrapper,
+.sqllab-left .ant-input { border-radius: 8px; }
+.sqllab-left .tree-table {
+  border-radius: 8px;
+  transition: background 150ms ease;
+}
+.sqllab-left .tree-table:hover { background: #f4f8ff; }
+.sqllab-left .sample-btn { border-radius: 6px; }
+
+/* 中栏：工具栏 / 编辑器 / 结果 */
+.toolbar {
+  padding: 10px 14px;
+  border-bottom: 1px solid #f0f2f5;
+  background: #ffffff;
+}
+.toolbar .ant-btn-primary {
+  border-radius: 8px;
+  height: 34px;
+  padding: 0 20px;
+  font-weight: 600;
+}
+.toolbar .ant-btn-default { border-radius: 8px; }
+.toolbar .ant-segmented { border-radius: 8px; padding: 2px; }
+.toolbar .ant-input-number { border-radius: 8px; }
+.toolbar .dim { color: #98a2b3; }
+
+.editor-wrap {
+  height: 260px;
+  border-bottom: 1px solid #f0f2f5;
+  background: #fbfcfe;
+}
+.sql-editor .cm-editor { background: #fbfcfe; }
+.sql-editor .cm-editor.cm-focused { outline: none; }
+
+.result-panel { background: #ffffff; }
+.result-panel-head { border-bottom: 1px solid #f0f2f5; }
+.result-panel .ant-tabs-nav { padding: 0 10px; }
+
+/* 空状态柔和化 */
+.sqllab .ant-empty { padding: 44px 0; }
+.sqllab .ant-empty .ant-empty-image { opacity: 0.5; }
+.sqllab .ant-empty .ant-empty-description { color: #98a2b3; font-size: 13px; }
+
+/* 结果表格 */
+.grid-wrap {
+  border: 1px solid #eceff3;
+  border-radius: 10px;
+  overflow: auto;
+}
+.grid-wrap .grid th {
+  background: #f7f8fa;
+  color: #475467;
+  font-weight: 600;
+  border-bottom: 1px solid #eceff3;
+}
+.grid-wrap .grid td { border-bottom: 1px solid #f4f6f9; }
+.grid-wrap .grid .row-no { color: #b6bec9; background: #fafbfc; }
+
+/* 历史与日志条目卡片化 */
+.history-item {
+  border: 1px solid #eceff3;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  background: #ffffff;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+.history-item:hover { border-color: #d6dbe3; box-shadow: 0 4px 12px rgba(16, 24, 40, 0.06); }
+.history-sql {
+  background: #f7f8fa;
+  border-radius: 8px;
+  padding: 8px 10px;
+  border: 1px solid #eef1f4;
+}
+.log-line { border-radius: 6px; padding: 3px 8px; }
+.log-line:hover { background: #f7f8fa; }
+
+/* 右栏：AI / 闯关 / 造数面板 */
+.sqllab-right .right-tabs > .ant-tabs-nav { padding: 0 12px; }
+.sqllab-right .ant-tabs-tab { font-size: 13.5px; }
+.ai-panel,
+.seed-panel,
+.exercise-panel { padding: 14px; }
+.ai-model .ant-tag { border-radius: 999px; }
+.ai-panel .ant-segmented { border-radius: 8px; padding: 2px; }
+.ai-panel textarea.ant-input,
+.seed-panel textarea.ant-input,
+.exercise-panel textarea.ant-input { border-radius: 10px; }
+.ai-actions .ant-btn-primary,
+.seed-panel .ant-btn-primary,
+.exercise-panel .ant-btn-primary {
+  width: 100%;
+  border-radius: 8px;
+  height: 36px;
+  font-weight: 600;
+}
+.ai-sql,
+.ai-sql-preview,
+pre.ai-sql {
+  background: #0f1115;
+  color: #a5f3fc;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-family: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.ai-explanation {
+  background: #f7f8fa;
+  border: 1px solid #eef1f4;
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: #667085;
+  font-size: 12.5px;
+  line-height: 1.8;
+}
+.ai-context { background: #f7f8fa; border: 1px solid #eceff3; border-radius: 10px; }
+.ai-error-box { color: #d92d20; }
+
+/* 顶栏（工作台页头） */
+.app-header {
+  background: #ffffff;
+  border-bottom: 1px solid #e8eaee;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.04);
+}
+
+/* ===== 三处交互优化（吸底 / 拖拉 / 自适应高度） ===== */
+
+/* 1. 左栏：提示语固定吸底在最下方 */
+.sqllab-left > .schema-panel {
+  flex: 1;
+  height: 100%;
+  min-height: 0;
+}
+.schema-footer {
+  margin-top: auto;
+  flex: 0 0 auto;
+  padding: 9px 10px;
+  border-top: 1px solid #f0f2f5;
+  background: #fafbfc;
+  border-radius: 8px;
+  color: #98a2b3;
+  font-size: 12px;
+  text-align: center;
+}
+.schema-body { flex: 1 1 auto; }
+
+/* 2. 编辑器与结果区之间的可拖拉分隔条 */
+.editor-wrap { flex: 0 0 auto; }
+.editor-resizer {
+  height: 9px;
+  flex: 0 0 9px;
+  cursor: row-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f7f8fa;
+  border-top: 1px solid #eceff3;
+  border-bottom: 1px solid #eceff3;
+  transition: background 150ms ease;
+  touch-action: none;
+  z-index: 2;
+}
+.editor-resizer span {
+  width: 38px; height: 3px; border-radius: 3px;
+  background: #cbd3de;
+  transition: background 150ms ease, width 150ms ease;
+}
+.editor-resizer:hover,
+.editor-resizer:active { background: #e8f1ff; }
+.editor-resizer:hover span,
+.editor-resizer:active span { background: #1677ff; width: 52px; }
+
+/* 3. AI 输入框随内容自适应高度（autoSize），并给按钮留出呼吸空间 */
+.ai-panel .ant-input-textarea textarea {
+  resize: none;
+  line-height: 1.7;
+  border-radius: 10px;
+}
+.ai-actions { margin-top: 4px; }
+.ai-actions .ant-btn { min-height: 34px; }
+
+/* ===== 执行记录筛选 / 造数目标空间 / 练习题空间提示 ===== */
+.history-filters {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 12px; padding: 9px 11px;
+  background: #f7f8fa; border: 1px solid #eceff3; border-radius: 10px;
+}
+.history-filters .dim { margin-left: auto; }
+.history-filters .ant-btn-link { padding: 0 4px; }
+
+.seed-space-row { display: flex; align-items: center; gap: 10px; margin: 2px 0 10px; }
+.seed-space-row .dim { flex: 0 0 auto; }
+.seed-space-row .ant-input { flex: 1; border-radius: 8px; }
+
+.exercise-space-bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 8px 10px; background: #f7f8fa;
+  border: 1px solid #eceff3; border-radius: 10px;
+}
+.exercise-space-bar .ant-btn { border-radius: 8px; }
