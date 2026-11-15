@@ -282,7 +282,7 @@ export function HomePage({ onGoSql }: { onGoSql: () => void }) {
         {SCENES.map((s, i) => (
           <div className={'hp-hero-layer' + (i === active ? ' on' : '')} key={s.id} aria-hidden={i !== active}>
             {s.video ? (
-              <video ref={i === 0 ? videoRef : undefined} src={s.video} autoPlay loop muted playsInline />
+              <video ref={i === 0 ? videoRef : undefined} src={s.video} poster={s.img} autoPlay loop muted playsInline />
             ) : (
               <img src={s.img} alt={`Scene ${s.id}`} draggable={false} />
             )}
